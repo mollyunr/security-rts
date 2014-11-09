@@ -37,7 +37,7 @@ public class WorldObject : MonoBehaviour
 		if(currentlySelected) DrawSelection();
 	}
 
-	public void SetSelection(bool selected, Rect playingArea) 
+	public virtual void SetSelection(bool selected, Rect playingArea)
 	{
 		currentlySelected = selected;
 		if(selected) 
