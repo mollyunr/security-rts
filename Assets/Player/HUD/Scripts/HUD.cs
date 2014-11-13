@@ -31,6 +31,8 @@ public class HUD : MonoBehaviour {
 	public Texture2D smallButtonHover, smallButtonClick;
 	public Texture2D rallyPointCursor;
 	private CursorState previousCursorState;
+	public Texture2D healthy, damaged, critical;
+	public Texture2D[] resourceHealthBars;
 
 
 	// Use this for initialization
@@ -39,7 +41,7 @@ public class HUD : MonoBehaviour {
 		resourceValues = new Dictionary< ResourceType, int >();
 		resourceLimits = new Dictionary< ResourceType, int >();
 		player = transform.root.GetComponent< Player >(); // init reference to our player
-		ResourceManager.StoreSelectBoxItems(selectBoxSkin);
+		ResourceManager.StoreSelectBoxItems(selectBoxSkin, healthy, damaged, critical);
 		SetCursorState(CursorState.Select);
 		resourceImages = new Dictionary< ResourceType, Texture2D >();
 		for(int i = 0; i < resources.Length; i++) {
@@ -58,6 +60,17 @@ public class HUD : MonoBehaviour {
 			}
 		}
 		buildAreaHeight = Screen.height - RESOURCE_BAR_HEIGHT - SELECTION_NAME_HEIGHT - 2 * BUTTON_SPACING;
+		Dictionary< ResourceType, Texture2D > resourceHealthBarTextures = new Dictionary< ResourceType, Texture2D >();
+		for(int i = 0; i < resourceHealthBars.Length; i++) {
+			switch(resourceHealthBars[i].name) {
+			case "ore":
+				resourceHealthBarTextures.Add(ResourceType.Ore, resourceHealthBars[i]);
+				break;
+			default: break;
+			}
+		}
+		ResourceManager.SetResourceHealthBarTextures(resourceHealthBarTextures);
+
 	}
 	
 	// Update is called once per frame
@@ -139,12 +152,14 @@ public class HUD : MonoBehaviour {
 		else 
 		{
 			Screen.showCursor = false;
-			GUI.skin = mouseCursorSkin;
-			GUI.BeginGroup(new Rect(0,0,Screen.width,Screen.height));
-			UpdateCursorAnimation();
-			Rect cursorPosition = GetCursorDrawPosition();
-			GUI.Label(cursorPosition, activeCursor);
-			GUI.EndGroup();
+			if(!player.IsFindingBuildingLocation()) {
+				GUI.skin = mouseCursorSkin;
+				GUI.BeginGroup(new Rect(0,0,Screen.width,Screen.height));
+				UpdateCursorAnimation();
+				Rect cursorPosition = GetCursorDrawPosition();
+				GUI.Label(cursorPosition, activeCursor);
+				GUI.EndGroup(); 
+			}
 		}
 	}
 
