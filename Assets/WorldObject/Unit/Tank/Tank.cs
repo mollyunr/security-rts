@@ -9,4 +9,8 @@ public class Tank : Unit {
 	protected override void Update () {
 		base.Update();
 	}
+
+	public override bool CanAttack() {
+		return true;
+	}
 }

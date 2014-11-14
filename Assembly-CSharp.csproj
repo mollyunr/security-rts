@@ -61,6 +61,7 @@
      <Compile Include="Assets\WorldObject\Resource\OreDeposit\Ore.cs" />
      <Compile Include="Assets\WorldObject\Resource\OreDeposit\OreDeposit.cs" />
      <Compile Include="Assets\WorldObject\Resource\Resource.cs" />
+     <Compile Include="Assets\WorldObject\TeamColor.cs" />
      <Compile Include="Assets\WorldObject\Unit\Harvester\Arms.cs" />
      <Compile Include="Assets\WorldObject\Unit\Harvester\Harvester.cs" />
      <Compile Include="Assets\WorldObject\Unit\Tank\Tank.cs" />

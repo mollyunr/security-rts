@@ -28,6 +28,12 @@ public class WorldObject : MonoBehaviour
 	protected virtual void Start () 
 	{
 		SetPlayer ();
+		if (player) SetTeamColor ();
+	}
+
+	protected void SetTeamColor() {
+		TeamColor[] teamColors = GetComponentsInChildren< TeamColor >();
+		foreach(TeamColor teamColor in teamColors) teamColor.renderer.material.color = player.teamColor;
 	}
 
 	public void SetPlayer() {
@@ -112,10 +118,21 @@ public class WorldObject : MonoBehaviour
 	public virtual void SetHoverState(GameObject hoverObject) {
 		//only handle input if owned by a human player and currently selected
 		if(player && player.human && currentlySelected) {
-			if(hoverObject.name != "Ground") player.hud.SetCursorState(CursorState.Select);
+			//something other than the ground is being hovered over
+			if(hoverObject.name != "Ground") {
+				Player owner = hoverObject.transform.root.GetComponent< Player >();
+				Unit unit = hoverObject.transform.parent.GetComponent< Unit >();
+				Building building = hoverObject.transform.parent.GetComponent< Building >();
+				if(owner) { //the object is owned by a player
+					if(owner.username == player.username) player.hud.SetCursorState(CursorState.Select);
+					else if(CanAttack()) player.hud.SetCursorState(CursorState.Attack);
+					else player.hud.SetCursorState(CursorState.Select);
+				} else if(unit || building && CanAttack()) player.hud.SetCursorState(CursorState.Attack);
+				else player.hud.SetCursorState(CursorState.Select);
+			}
 		}
 	}
-
+	
 	public bool IsOwnedBy(Player owner) {
 		if(player && player.Equals(owner)) {
 			return true;
@@ -167,4 +184,10 @@ public class WorldObject : MonoBehaviour
 		healthStyle.fontStyle = FontStyle.Bold;
 		GUI.Label(new Rect(selectBox.x, selectBox.y - 7, selectBox.width * healthPercentage, 5), label, healthStyle);
 	}
+
+	public virtual bool CanAttack() {
+		//default behaviour needs to be overidden by children
+		return false;
+	}
+	
 }
